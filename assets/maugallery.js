@@ -1,9 +1,21 @@
 (function($) {
+
+  // ===== FONCTION PRINCIPALE =====
   $.fn.mauGallery = function(options) {
+
+    // Fusionne les options par défaut avec celles données par l'utilisateur
     var options = $.extend($.fn.mauGallery.defaults, options);
+
+    // Tableau vide → va contenir les catégories des images
     var tagsCollection = [];
+
+    // "this" représente chaque galerie sur laquelle le plugin est appliqué
     return this.each(function() {
+
+      // Crée une ligne Bootstrap pour contenir les images
       $.fn.mauGallery.methods.createRowWrapper($(this));
+
+      // Si la lightbox est activée → on crée la modale
       if (options.lightBox) {
         $.fn.mauGallery.methods.createLightBox(
           $(this),
@@ -11,15 +23,28 @@
           options.navigation
         );
       }
+
+      // Active tous les événements (clic images, filtres, flèches)
       $.fn.mauGallery.listeners(options);
 
+      // Pour chaque image de la galerie
       $(this)
         .children(".gallery-item")
         .each(function(index) {
+
+          // Rend l’image responsive
           $.fn.mauGallery.methods.responsiveImageItem($(this));
+
+          // Déplace l’image dans la ligne Bootstrap
           $.fn.mauGallery.methods.moveItemInRowWrapper($(this));
+
+          // Met l’image dans une colonne Bootstrap
           $.fn.mauGallery.methods.wrapItemInColumn($(this), options.columns);
+
+          // Récupère la catégorie de l’image
           var theTag = $(this).data("gallery-tag");
+
+          // Ajoute la catégorie au tableau si elle n'existe pas déjà
           if (
             options.showTags &&
             theTag !== undefined &&
@@ -29,6 +54,7 @@
           }
         });
 
+      // Crée les boutons filtres
       if (options.showTags) {
         $.fn.mauGallery.methods.showItemTags(
           $(this),
@@ -37,9 +63,12 @@
         );
       }
 
+      // Petite animation d’apparition
       $(this).fadeIn(500);
     });
   };
+
+  // ===== OPTIONS PAR DÉFAUT =====
   $.fn.mauGallery.defaults = {
     columns: 3,
     lightBox: true,
@@ -48,7 +77,11 @@
     tagsPosition: "bottom",
     navigation: true
   };
+
+  // ===== GESTION DES ÉVÉNEMENTS =====
   $.fn.mauGallery.listeners = function(options) {
+
+    // Clic sur image → ouvre la modale
     $(".gallery-item").on("click", function() {
       if (options.lightBox && $(this).prop("tagName") === "IMG") {
         $.fn.mauGallery.methods.openLightBox($(this), options.lightboxId);
@@ -57,14 +90,21 @@
       }
     });
 
+    // Clic sur filtres
     $(".gallery").on("click", ".nav-link", $.fn.mauGallery.methods.filterByTag);
+
+    // Clic flèche gauche
     $(".gallery").on("click", ".mg-prev", () =>
       $.fn.mauGallery.methods.prevImage(options.lightboxId)
     );
+
+    // Clic flèche droite
     $(".gallery").on("click", ".mg-next", () =>
       $.fn.mauGallery.methods.nextImage(options.lightboxId)
     );
   };
+
+  // ===== MÉTHODES =====
   $.fn.mauGallery.methods = {
     createRowWrapper(element) {
       if (
@@ -119,12 +159,20 @@
         .attr("src", element.attr("src"));
       $(`#${lightboxId}`).modal("toggle");
     },
-    // Fonction pour aller à l'image précédente dans la modale
+
+
+
+
+// ===============================
+// MODIFICATION : navigation image PRÉCÉDENTE
+// ===============================
+
+// Fonction pour aller à l'image précédente dans la modale
 prevImage(lightboxId) {
-  // On récupère la galerie actuelle en fonction de la modale
+  // On cible la galerie liée à la modale
   let gallery = $(`#${lightboxId}`).closest(".gallery");
   
-  // Trouve l'image actuellement affichée dans la modale
+  // Récupère l’image affichée
   let activeSrc = $(`#${lightboxId} .lightboxImage`).attr("src");
 
   // Crée un tableau de toutes les images visibles dans cette galerie
@@ -135,15 +183,21 @@ prevImage(lightboxId) {
     }
   });
 
-  // Trouve l'index de l'image active
+  // Position de l’image actuelle
   let index = imagesCollection.findIndex(img => $(img).attr("src") === activeSrc);
 
-  // Détermine l'image précédente (ou la dernière si on est au début)
+  // Correction : si on est au début, on va à la dernière image
   let prevIndex = (index > 0) ? index - 1 : imagesCollection.length - 1;
 
-  // Change l'image dans la modale
+  // Met à jour l’image dans la modale
   $(`#${lightboxId} .lightboxImage`).attr("src", $(imagesCollection[prevIndex]).attr("src"));
 },
+
+
+
+// ===============================
+//MODIFICATION : navigation image SUIVANTE
+// ===============================
 
 // Fonction pour aller à l'image suivante dans la modale
 nextImage(lightboxId) {
@@ -164,7 +218,7 @@ nextImage(lightboxId) {
   // Trouve l'index de l'image active
   let index = imagesCollection.findIndex(img => $(img).attr("src") === activeSrc);
 
-  // Détermine l'image suivante (ou la première si on est à la fin)
+  // Correction : si on est à la fin, on revient à la première
   let nextIndex = (index < imagesCollection.length - 1) ? index + 1 : 0;
 
   // Change l'image dans la modale
@@ -210,11 +264,22 @@ nextImage(lightboxId) {
         console.error(`Unknown tags position: ${position}`);
       }
     },
+
+
+
+
+// ===============================
+//MODIFICATION : couleur du filtre actif
+// ===============================
     filterByTag() {
       if ($(this).hasClass("active-tag")) {
         return;
       }
+
+      // modification Retire la classe Bootstrap active de tous les filtres
       $(".tags-bar .nav-link").removeClass("active active-tag");
+
+    // modification Ajoute active au filtre sélectionné (fond doré Bootstrap)
     $(this).addClass("active active-tag");
 
       var tag = $(this).data("images-toggle");
