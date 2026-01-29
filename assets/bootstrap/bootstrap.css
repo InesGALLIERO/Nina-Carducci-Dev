@@ -6588,6 +6588,8 @@ textarea.form-control-lg {
   clip: rect(0, 0, 0, 0) !important;
   white-space: nowrap !important;
   border: 0 !important;
+  color: #000 !important;
+  background-color: #fff !important;
 }
 
 .stretched-link::after {
