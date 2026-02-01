@@ -161,10 +161,12 @@
     },
 
 
-
+// ===============================
+// MODIFICATION : DÉBUT => LOGIQUE DES FLÈCHES DE NAVIGATION
+// ===============================
 
 // ===============================
-// MODIFICATION : navigation image PRÉCÉDENTE
+// navigation image PRÉCÉDENTE
 // ===============================
 
 // Fonction pour aller à l'image précédente dans la modale
@@ -224,7 +226,13 @@ nextImage(lightboxId) {
   // Change l'image dans la modale
   $(`#${lightboxId} .lightboxImage`).attr("src", $(imagesCollection[nextIndex]).attr("src"));
 },
-    createLightBox(gallery, lightboxId, navigation) {
+
+// ===============================
+// FIN : LOGIQUE DES FLÈCHES DE NAVIGATION
+// ===============================
+
+
+createLightBox(gallery, lightboxId, navigation) {
       gallery.append(`<div class="modal fade" id="${
         lightboxId ? lightboxId : "galleryLightbox"
       }" tabindex="-1" role="dialog" aria-hidden="true">
@@ -246,8 +254,8 @@ nextImage(lightboxId) {
                     </div>
                 </div>
             </div>`);
-    },
-    showItemTags(gallery, position, tags) {
+},
+showItemTags(gallery, position, tags) {
       var tagItems =
         '<li class="nav-item"><span class="nav-link active active-tag"  data-images-toggle="all">Tous</span></li>';
       $.each(tags, function(index, value) {
@@ -263,7 +271,7 @@ nextImage(lightboxId) {
       } else {
         console.error(`Unknown tags position: ${position}`);
       }
-    },
+},
 
 
 
